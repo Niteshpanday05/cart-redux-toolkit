@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Navbar from './Navbar'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchProducts } from '../features/ShopCart/ProductSlice';
 
 const ProductList = () => {
-  const[products,setProducts] = useState([])
+  
+  const{items:products,status} = useSelector((state)=>state.products);
+  const dispatch = useDispatch()
 
   useEffect(()=>{
-    const fetchProducts = async() => {
-      const response = await fetch ('https://fakestoreapi.com/products')
-      const data = await response.json();
-      console.log(data);
-      setProducts(data)
+    if(status==='idle'){
+      dispatch(fetchProducts())
     }
-    fetchProducts()
-  },[])
+   
+  },[status])
+
+  if(status==='loading')return <p>Loading Products....</p>
+  if(status==='failed')return <p>Failed to load Products...please try again</p>
 
   return (
     <>
